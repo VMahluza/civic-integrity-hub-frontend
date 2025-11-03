@@ -25,14 +25,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v2
+              uses: aws-actions/configure-aws-credentials@v4
+              timeout-minutes: 5
               with:
-                  role-to-assume: ${{ env.AWS_ROLE }}
-                  aws-region: ${{ env.AWS_REGION }}
+                role-to-assume: ${{ env.AWS_ROLE }}
+                aws-region: ${{ env.AWS_REGION }}
+                retry-max-attempts: 3
+
             - name: Verify AWS Credentials
-              run: if aws s3 ls s3://${{ env.S3_BUCKET }}; then
+              run: |
+                if aws s3 ls s3://${{ env.S3_BUCKET }}; then
                     echo "AWS Credentials are valid";
-                    else echo "AWS Credentials are invalid";
+                else
+                    echo "AWS Credentials are invalid";
                     exit 1;
-                    fi
+                fi
             
