@@ -79,5 +79,5 @@ jobs:
 
             - name: Sync to S3
               run: |
-                aws s3 sync .out s3://${{ env.S3_BUCKET }}/ --delete
+                aws s3 sync .next/build/ s3://${{ env.S3_BUCKET }}/ --delete
                 timeout-minutes: 10
