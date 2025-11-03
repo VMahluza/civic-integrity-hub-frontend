@@ -1,0 +1,38 @@
+name: Victor Deploys to s3
+
+# Trigger
+on:
+    push:
+        branches: ["dev"]
+    workflow_dispatch:
+
+concurrency:
+    group: cih-{{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    AWS_REGION: af-south-1
+    S3_BUCKET: civic-integrity-hub-frontend-dev
+    AWS_ROLE: arn:aws:iam::906580120265:role/civic-integrity-hub-dev-role
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    configure-aws:
+        name: Configure AWS Creds
+        runs-on: ubuntu-latest
+        steps:
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                  role-to-assume: ${{ env.AWS_ROLE }}
+                  aws-region: ${{ env.AWS_REGION }}
+            - name: Verify AWS Credentials
+              run: if aws s3 ls s3://${{ env.S3_BUCKET }}; then
+                    echo "AWS Credentials are valid";
+                    else echo "AWS Credentials are invalid";
+                    exit 1;
+                    fi
+            
