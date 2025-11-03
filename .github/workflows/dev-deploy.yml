@@ -1,4 +1,4 @@
-name: Victor Deploys to s3
+name: Deploys to s3
 
 # Trigger
 on:
